@@ -1,0 +1,54 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-4 col-md-offset-4">
+      <form #form="ngForm" (ngSubmit)="signup(form.value)">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input
+            class="form-control"
+            id="username"
+            name="username"
+            placeholder="Username"
+            type="text"
+            [(ngModel)]="user.username"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            class="form-control"
+            id="password"
+            name="password"
+            placeholder="Password"
+            type="password"
+            [(ngModel)]="user.password"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Dietary Preferences:</label>
+          <div *ngFor="let pref of dietPreferences; let i = index">
+            <label class="checkbox-inline" [for]="pref.name">
+              <input
+                type="checkbox"
+                name="preference"
+                [id]="pref.name"
+                (change)="onPrefCheck(i)"
+              />{{ pref.name }}
+            </label>
+          </div>
+        </div>
+
+        <div class="error alert alert-danger" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
+        <div class="form-group">
+          <button class="btn btn-default" type="submit">
+            Submit
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
