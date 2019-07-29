@@ -3,12 +3,16 @@ import { HttpClient } from '@angular/common/http';
 import { User } from './user';
 import { Observable } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private jwtHelper: JwtHelperService
+  ) {}
 
   signup(credentials: User): Observable<object> {
     return this.http
@@ -25,5 +29,9 @@ export class AuthService {
           return res;
         })
       );
+  }
+
+  isLoggedIn() {
+    return !this.jwtHelper.isTokenExpired();
   }
 }

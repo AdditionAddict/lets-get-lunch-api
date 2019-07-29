@@ -3,8 +3,14 @@ import {
   HttpClientTestingModule,
   HttpTestingController
 } from '@angular/common/http/testing';
+import { JwtModule, JwtHelperService } from '@auth0/angular-jwt';
+
 import { AuthService } from './auth.service';
 import { of } from 'rxjs';
+
+function tokenGetter() {
+  return localStorage.getItem('Authorization');
+}
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -12,8 +18,11 @@ describe('AuthService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      providers: [AuthService]
+      imports: [
+        HttpClientTestingModule,
+        JwtModule.forRoot({ config: { tokenGetter } })
+      ],
+      providers: [AuthService, JwtHelperService]
     });
 
     authService = TestBed.get(AuthService);
@@ -118,6 +127,23 @@ describe('AuthService', () => {
         );
       expect(errorResponse.error.message).toEqual(signupResponse);
       http.verify();
+    });
+  });
+
+  describe('isLoggedIn', () => {
+    it('should return true if user is logged in', () => {
+      localStorage.setItem(
+        'Authorization',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.' +
+          'eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.' +
+          'SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
+      );
+      expect(authService.isLoggedIn()).toEqual(true);
+    });
+
+    it('should return false if user is not logged in', () => {
+      localStorage.removeItem('Authorization');
+      expect(authService.isLoggedIn()).toEqual(false);
     });
   });
 });
