@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth/auth.service';
 import { User } from '../services/auth/user';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-signup',
@@ -22,7 +23,10 @@ export class SignupComponent implements OnInit {
   ];
   errorMessage: string;
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   ngOnInit() {}
 
@@ -30,8 +34,7 @@ export class SignupComponent implements OnInit {
     credentials.dietPreferences = this.getSelectedPreferences();
     this.authService.signup(credentials).subscribe(
       res => {
-        console.log('res', res);
-        // Redirect to user dashboard
+        this.router.navigate(['/dashboard']);
       },
       err => {
         this.errorMessage = err.error.message;

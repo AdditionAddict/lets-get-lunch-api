@@ -10,11 +10,13 @@ import { AuthService } from '../services/auth/auth.service';
 import { DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { of, throwError } from 'rxjs';
+import { Router } from '@angular/router';
 
 let component: SignupComponent;
 let fixture: ComponentFixture<SignupComponent>;
 let signupPage: SignupPage;
 let authService: AuthService;
+let router: Router;
 
 class SignupPage {
   submitBtn: DebugElement;
@@ -40,6 +42,10 @@ class MockAuthService {
   signup(credentials) {}
 }
 
+class MockRouter {
+  navigate(path) {}
+}
+
 describe('SignupComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -48,7 +54,8 @@ describe('SignupComponent', () => {
       .overrideComponent(SignupComponent, {
         set: {
           providers: [
-            { provide: AuthService, useClass: MockAuthService }
+            { provide: AuthService, useClass: MockAuthService },
+            { provide: Router, useClass: MockRouter }
           ]
         }
       })
@@ -61,6 +68,7 @@ describe('SignupComponent', () => {
 
     signupPage = new SignupPage();
     authService = fixture.debugElement.injector.get(AuthService);
+    router = fixture.debugElement.injector.get(Router);
 
     fixture.detectChanges();
     return fixture.whenStable().then(() => {
@@ -84,6 +92,7 @@ describe('SignupComponent', () => {
     spyOn(authService, 'signup').and.callFake(() => {
       return of({ token: 's3cr3tt0ken' });
     });
+    spyOn(router, 'navigate');
     signupPage.submitBtn.nativeElement.click();
 
     expect(authService.signup).toHaveBeenCalledWith({
@@ -91,6 +100,7 @@ describe('SignupComponent', () => {
       password: 'password',
       dietPreferences: ['BBQ', 'Burger']
     });
+    expect(router.navigate).toHaveBeenCalledWith(['/dashboard']);
   });
 
   it('should display an error message with invalid credentials', () => {
@@ -112,7 +122,7 @@ describe('SignupComponent', () => {
     const errorMessage: DebugElement = fixture.debugElement.query(
       By.css('.alert')
     );
-    expect(errorMessage.nativeElement.textContent).toEqual(
+    expect(errorMessage.nativeElement.textContent.trim()).toEqual(
       'Your password must be at least 5 characters long.'
     );
   });
