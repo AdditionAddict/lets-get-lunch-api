@@ -56,6 +56,36 @@ describe('Signup', () => {
       });
   });
 
-  //   TODO;
-  //   it('should display an error for username that already exists', () => {});
+  it('should display an error for username that already exists', () => {
+    cy.visit('/signup')
+      .url()
+      .should('include', '/signup')
+      .get('#username')
+      .type('user')
+      .get('#password')
+      .type('password')
+      .get('form')
+      .submit()
+      .url()
+      .should('include', '/dashboard');
+
+    cy.get('[data-test=logout]').click();
+
+    cy.visit('/signup')
+      .url()
+      .should('include', '/signup')
+      .get('#username')
+      .type('user')
+      .get('#password')
+      .type('password')
+      .get('form')
+      .submit()
+      .get('.alert')
+      .should('be.visible')
+      .should(elem => {
+        expect(elem.text().trim()).to.equal(
+          'This user already exists.'
+        );
+      });
+  });
 });

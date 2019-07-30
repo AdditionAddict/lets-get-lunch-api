@@ -31,7 +31,7 @@ describe('Navbar', () => {
 
     it('should show a link to logout', () => {
       cy.get('[data-test=logout]')
-        .should('have.test', 'Logout')
+        .should('have.text', 'Logout')
         .click()
         .url()
         .should('include', '/');
