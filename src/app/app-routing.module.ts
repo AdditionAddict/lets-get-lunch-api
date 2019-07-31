@@ -16,8 +16,13 @@ const routes: Routes = [
         m => m.DashboardModule
       )
   },
+  {
+    path: 'login',
+    loadChildren: () =>
+      import('./login/login.module').then(m => m.LoginModule)
+  },
   { path: '', component: HomeComponent, pathMatch: 'full' },
-  { path: '**', redirectTo: '/signup' }
+  { path: '**', redirectTo: '/' }
 ];
 
 @NgModule({
