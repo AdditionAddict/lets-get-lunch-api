@@ -21,6 +21,11 @@ const routes: Routes = [
     loadChildren: () =>
       import('./login/login.module').then(m => m.LoginModule)
   },
+  {
+    path: 'event',
+    loadChildren: () =>
+      import('./event/event.module').then(m => m.EventModule)
+  },
   { path: '', component: HomeComponent, pathMatch: 'full' },
   { path: '**', redirectTo: '/' }
 ];
