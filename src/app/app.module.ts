@@ -6,12 +6,13 @@ import {
   HTTP_INTERCEPTORS
 } from '@angular/common/http';
 import { JwtModule } from '@auth0/angular-jwt';
-
+import { AgmCoreModule } from '@agm/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { AuthInterceptorService } from './interceptors/auth-interceptor.service';
+import { environment } from '../environments/environment';
 
 export function tokenGetter() {
   return localStorage.getItem('Authorization');
@@ -24,7 +25,11 @@ export function tokenGetter() {
     BrowserAnimationsModule,
     AppRoutingModule,
     HttpClientModule,
-    JwtModule.forRoot({ config: { tokenGetter } })
+    JwtModule.forRoot({ config: { tokenGetter } }),
+    AgmCoreModule.forRoot({
+      apiKey: environment.googleMaps,
+      libraries: ['places']
+    })
   ],
   providers: [
     {
