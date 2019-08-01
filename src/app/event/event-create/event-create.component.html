@@ -51,7 +51,7 @@
             class="form-control"
             [owlDateTime]="dt2"
             [owlDateTimeTrigger]="dt2"
-            formControlName="startTime"
+            formControlName="endTime"
           />
           <owl-date-time #dt2></owl-date-time>
         </div>
@@ -73,6 +73,13 @@
             [value]="false"
           />
           <label for="suggest-false">No</label>
+        </div>
+
+        <div *ngIf="error" class="alert alert-danger">
+          {{ error }}
+        </div>
+        <div *ngIf="success" class="alert alert-success">
+          {{ success }}
         </div>
 
         <div class="form-group">
