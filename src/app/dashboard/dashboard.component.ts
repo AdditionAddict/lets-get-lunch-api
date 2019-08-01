@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth/auth.service';
 import { EventsService } from '../services/events/events.service';
 import { Event } from '../services/events/event';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -17,16 +18,20 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private eventsService: EventsService
+    private eventsService: EventsService,
+    private router: Router
   ) {}
 
   ngOnInit() {
     const id = this.authService.currentUser()._id;
     this.eventsService.getUserEvents(id).subscribe(
       res => {
+        console.log('user has the following events', res);
         if (res) {
+          this.events = this.addAllDay(res);
           this.events = this.addJSDate(res);
           this.events = this.addEventColors(this.events);
+          console.log(this.events);
         } else {
           this.noEvents = 'You are not a member of any events.';
         }
@@ -42,7 +47,16 @@ export class DashboardComponent implements OnInit {
       return {
         ...event,
         start: new Date(event.startTime),
-        end: new Date(event.startTime)
+        end: new Date(event.endTime)
+      };
+    });
+  }
+
+  addAllDay(events: Array<Event>): Array<Event> {
+    return events.map(event => {
+      return {
+        ...event,
+        allDay: true
       };
     });
   }
@@ -59,7 +73,7 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  eventClicked() {
-    // Route to event view page
+  eventClicked(event: Event) {
+    this.router.navigate(['/event/', event._id]);
   }
 }

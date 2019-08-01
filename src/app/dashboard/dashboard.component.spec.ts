@@ -13,6 +13,7 @@ import { Event } from '../services/events/event';
 import { of } from 'rxjs';
 import { DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 
 const currentUser = {
   _id: '5a55135639fbc4ca3ee0ce5a',
@@ -27,13 +28,17 @@ const events: Array<Event> = [
     city: 'Atlanta',
     state: 'GA',
     startTime: new Date().toISOString(),
-    endTime: new Date().toISOString(),
+    endTime: '2019-08-01T20:23:05.000Z',
     __v: 0,
     suggestLocations: true,
     _id: '5a55135639fbc4ca3ee0ce5a',
     members: ['5a550ea739fbc4ca3ee0ce58']
   }
 ];
+
+class MockRouter {
+  navigate(path) {}
+}
 
 class MockAuthService {
   currentUser = jasmine
@@ -54,6 +59,8 @@ describe('DashboardComponent', () => {
   let eventsService: EventsService;
   let viewDateElement: DebugElement[];
   let calendarEventElement: DebugElement[];
+  let eventLink: DebugElement[];
+  let router: Router;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -68,7 +75,8 @@ describe('DashboardComponent', () => {
         set: {
           providers: [
             { provide: AuthService, useClass: MockAuthService },
-            { provide: EventsService, useClass: MockEventsService }
+            { provide: EventsService, useClass: MockEventsService },
+            { provide: Router, useClass: MockRouter }
           ]
         }
       })
@@ -81,6 +89,7 @@ describe('DashboardComponent', () => {
 
     authService = fixture.debugElement.injector.get(AuthService);
     eventsService = fixture.debugElement.injector.get(EventsService);
+    router = fixture.debugElement.injector.get(Router);
     spyOn(component, 'addEventColors').and.callThrough();
     spyOn(component, 'addJSDate').and.callThrough();
 
@@ -92,6 +101,9 @@ describe('DashboardComponent', () => {
       );
       calendarEventElement = fixture.debugElement.queryAll(
         By.css('.cal-event')
+      );
+      eventLink = fixture.debugElement.queryAll(
+        By.css('.cal-event-title')
       );
     });
   }));
@@ -121,6 +133,15 @@ describe('DashboardComponent', () => {
     expect(
       calendarEventElement[0].nativeElement.textContent
     ).toContain('My First Event');
+  });
+
+  it('should navigate to the event view when an event is clicked', () => {
+    spyOn(router, 'navigate');
+    eventLink[0].nativeElement.click();
+    expect(router.navigate).toHaveBeenCalledWith([
+      '/event',
+      '5a55135639fbc4ca3ee0ce5a'
+    ]);
   });
 
   describe('addJSDate', () => {
