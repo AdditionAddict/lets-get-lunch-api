@@ -153,4 +153,41 @@ describe('EventsService', () => {
       http.verify();
     });
   });
+
+  describe('get', () => {
+    it('should return an event with a valid event id', () => {
+      const eventId = '5a55135639fbc4ca3ee0ce5a';
+      const eventResponse: Event = {
+        _id: '5a55135639fbc4ca3ee0ce5a',
+        _creator: '5a550ea739fbc4ca3ee0ce58',
+        title: 'My frist event',
+        description: 'My first description',
+        city: 'Atlanta',
+        state: 'GA',
+        startTime: '2018-01-09T19:00:00.000Z',
+        endTime: '2018-01-09T20:00:00.000Z',
+        __v: 0,
+        suggestLocations: true,
+        members: [
+          {
+            _id: '5a55135639fbc4ca3ee0ce5a',
+            username: 'newUser',
+            __v: 0,
+            dietPreferences: []
+          }
+        ]
+      };
+      let response;
+
+      EventsService.get(eventId).subscribe(res => {
+        response = res;
+      });
+
+      http
+        .expectOne('http://localhost:8080/api/events/' + eventId)
+        .flush(eventResponse);
+      expect(response).toEqual(eventResponse);
+      http.verify();
+    });
+  });
 });

@@ -88,6 +88,7 @@
       </mwl-calendar-month-view>
       <mwl-calendar-week-view
         hourSegments="1"
+        hourSegmentHeight="18"
         *ngSwitchCase="'week'"
         [viewDate]="viewDate"
         [events]="events"
@@ -96,6 +97,8 @@
       </mwl-calendar-week-view>
       <mwl-calendar-day-view
         *ngSwitchCase="'day'"
+        hourSegments="1"
+        hourSegmentHeight="18"
         [viewDate]="viewDate"
         [events]="events"
         (eventClicked)="eventClicked($event.event)"
